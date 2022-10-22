@@ -1,0 +1,13 @@
+[package]
+name = "photon_garden_obsidian"
+version = "0.1.0"
+edition = "2021"
+description = "A private library for parsing markdown files in Obsidian vaults."
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+walkdir = "2.3.2"
+regex = "1.6.0"
+lazy_static = "1.4.0"
