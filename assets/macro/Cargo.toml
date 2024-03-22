@@ -1,0 +1,34 @@
+[package]
+name = "assets_macro"
+version = "0.1.0"
+edition = "2021"
+description = ""
+license = "unlicensed"
+repository = "https://github.com/rainsound-ai/rainsound.ai/"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+assets_runtime = { path = "../runtime", features = ["build_time"] }
+proc-macro2 = "1.0.69"
+quote = "1.0.33"
+syn = "2.0.39"
+rayon = "1.8.0"
+log = "0.4.20"
+simple_logger = { version = "4.2.0", default-features = false, features = [
+    "stderr",
+    "colors",
+] }
+minify-js = { version = "0.5.6" }
+fs4 = "0.7.0"
+rand = "0.8.5"
+walkdir = "2.4.0"
+image = "0.24.7"
+prettyplease = "0.2.15"
+mime = "0.3.17"
+base64 = "0.21.5"
+# image_captioner = "0.2.2"
+uuid = { version = "1.6.1", features = ["v4"] }
+tailwind_cli = { git = "https://github.com/rainsound-ai/tailwind-cli" }
+lib_wasm_pack = { git = "https://github.com/rainsound-ai/lib-wasm-pack" }

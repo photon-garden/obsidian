@@ -1,0 +1,13 @@
+@tailwind base;
+
+@layer base {
+  /* @font-face {
+    font-family: 'Fugi';
+    src: local('Fugi'), local('fugi'), url('/built-assets/fonts/fugi.ttf');
+    font-weight: normal;
+    font-display: swap;
+  } */
+}
+
+@tailwind components;
+@tailwind utilities;

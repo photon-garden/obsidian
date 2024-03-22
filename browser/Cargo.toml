@@ -1,0 +1,58 @@
+[package]
+name = "browser"
+version = "0.1.0"
+authors = ["Luca Bailey <mail@photon.garden>"]
+edition = "2021"
+description = "The browser code for this project."
+license = "unlicensed"
+repository = "https://github.com/rainsound-ai/rainsound.ai/"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+dev = [
+    "chrono",
+    "console_error_panic_hook",
+    "futures-util",
+    "once_cell",
+    "wasm-bindgen-futures",
+]
+
+[dependencies]
+shared = { path = "../shared", features = ["browser"] }
+wasm-bindgen = "^0.2.86"
+chrono = { version = "0.4.26", optional = true }
+# The `console_error_panic_hook` crate provides better debugging of panics by
+# logging them with `console.error`. This is great for development, but requires
+# all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
+# code size when deploying.
+console_error_panic_hook = { version = "0.1.7", optional = true }
+futures-util = { version = "0.3.28", optional = true }
+gloo = { version = "0.9.0", features = ["futures", "events"] }
+once_cell = { version = "1.18.0", optional = true }
+wasm-bindgen-futures = { version = "0.4.36", optional = true }
+web-sys = { version = "0.3.4", features = [
+    "Document",
+    "Element",
+    "Headers",
+    "HtmlElement",
+    "Node",
+    "NodeList",
+    "Request",
+    "RequestInit",
+    "RequestMode",
+    "Response",
+    "Window",
+    "DomTokenList",
+] }
+serde = "1.0.183"
+serde_json = "1.0.104"
+wee_alloc = "0.4.5"
+nanoserde = "0.1.35"
+
+[build-dependencies]
+chrono = "0.4.26"
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.34"

@@ -1,0 +1,11 @@
+[package]
+name = "assets"
+version = "0.1.0"
+edition = "2021"
+description = "Assets processing."
+license = "unlicensed"
+repository = "https://github.com/rainsound-ai/rainsound.ai/"
+
+[dependencies]
+assets_runtime = { path = "../runtime" }
+assets_macro = { path = "../macro" }

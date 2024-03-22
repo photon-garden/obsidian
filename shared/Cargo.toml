@@ -1,0 +1,42 @@
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[package]
+name = "shared"
+version = "0.1.0"
+edition = "2021"
+description = "Code shared between browser and server."
+license = "unlicensed"
+repository = "https://github.com/rainsound-ai/rainsound.ai/"
+
+[features]
+browser = ["wasm-bindgen", "web-sys", "gloo", "wasm-bindgen-futures"]
+server = []
+
+[dependencies]
+wasm-bindgen = { version = "^0.2.86", optional = true }
+wasm-bindgen-futures = { version = "0.4.36", optional = true }
+gloo = { version = "0.11.0", optional = true, features = ["futures", "events"] }
+web-sys = { version = "0.3.4", optional = true, features = [
+    "Document",
+    "Element",
+    "Headers",
+    "HtmlElement",
+    "CssStyleDeclaration",
+    "Node",
+    "NodeList",
+    "Request",
+    "RequestInit",
+    "RequestMode",
+    "Response",
+    "Window",
+    "DomTokenList",
+    "ScrollBehavior",
+    "ScrollIntoViewOptions",
+] }
+maud = "0.25.0"
+enum-iterator = "1.4.1"
+ts-rs = "7.1.0"
+once_cell = "1.19.0"
+base64 = "0.21.7"
+serde = { version = "1.0.195", features = ["derive"] }
+serde_json = "1.0.111"

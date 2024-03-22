@@ -1,0 +1,22 @@
+[package]
+name = "assets_runtime"
+version = "0.1.0"
+edition = "2021"
+description = "Assets processing."
+license = "unlicensed"
+repository = "https://github.com/rainsound-ai/rainsound.ai/"
+
+[features]
+build_time = ["proc-macro2", "quote"]
+
+[dependencies]
+rayon = "1.8.0"
+cfg-if = "1.0.0"
+log = "0.4.20"
+proc-macro2 = { version = "1.0.69", optional = true }
+quote = { version = "1.0.33", optional = true }
+mime = "0.3.17"
+
+[dev-dependencies]
+# For parsing spin.toml in tests.
+toml = "0.8.6"

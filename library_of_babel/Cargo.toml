@@ -1,0 +1,16 @@
+[package]
+name = "library_of_babel"
+version = "0.1.0"
+edition = "2021"
+description = "Code for working with my Library of Babel Obsidian vault."
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+walkdir = "2.3.2"
+regex = "1.6.0"
+lazy_static = "1.4.0"
+chrono = "0.4.24"
+serde = { version = "1.0.197", features = ["derive"] }
+csv = "1.3.0"
