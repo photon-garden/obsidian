@@ -1,3 +1,5 @@
+use crate::WikiLinkStr;
+
 use super::{vault_items, File, Link, LinkTextStr, Page, VaultItem, VaultItemId};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
@@ -111,10 +113,24 @@ impl Vault {
         VaultItem::from_file(&file, &self.file_vec())
     }
 
-    pub fn vault_item_by_link_text(&self, link_text: &LinkTextStr) -> Option<&VaultItem> {
-        let files = self.file_vec();
-        let vault_item_id = Link::find_vault_item_id(link_text, &files)?;
+    pub fn vault_item_by_wiki_link(&self, wiki_link: &WikiLinkStr) -> Option<&VaultItem> {
+        let vault_item_id = self.vault_item_id_by_wiki_link(wiki_link)?;
         self.item(&vault_item_id)
+    }
+
+    pub fn vault_item_id_by_wiki_link(&self, wiki_link: &WikiLinkStr) -> Option<VaultItemId> {
+        let link_text = Link::extract_link_text(wiki_link);
+        self.vault_item_id_by_link_text(&link_text)
+    }
+
+    pub fn vault_item_by_link_text(&self, link_text: &LinkTextStr) -> Option<&VaultItem> {
+        let vault_item_id = self.vault_item_id_by_link_text(link_text)?;
+        self.item(&vault_item_id)
+    }
+
+    pub fn vault_item_id_by_link_text(&self, link_text: &LinkTextStr) -> Option<VaultItemId> {
+        let files = self.file_vec();
+        Link::find_vault_item_id(link_text, &files)
     }
 
     fn file_vec(&self) -> Vec<&File> {

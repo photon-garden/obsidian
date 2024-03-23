@@ -80,11 +80,23 @@ impl FieldDefinition {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, enum_iterator::Sequence)]
 pub enum ExpectedType {
     YyyyMmDd,
     String,
     U64,
+    Link,
+}
+
+impl ExpectedType {
+    fn as_str(&self) -> &'static str {
+        match self {
+            ExpectedType::YyyyMmDd => "yyyy.mm.dd",
+            ExpectedType::String => "string",
+            ExpectedType::U64 => "u64",
+            ExpectedType::Link => "link",
+        }
+    }
 }
 
 fn parse_type_that_might_be_optional(
@@ -103,12 +115,14 @@ fn parse_type_that_might_be_optional(
 }
 
 fn parse_type(line: &Line, type_text: &str) -> Result<ExpectedType, ParseError> {
-    match type_text {
-        "yyyy.mm.dd" => Ok(ExpectedType::YyyyMmDd),
-        "string" => Ok(ExpectedType::String),
-        "u64" => Ok(ExpectedType::U64),
-        _ => Err(ParseError::unexpected_field_type(line, type_text)),
+    let all_expected_types = enum_iterator::all::<ExpectedType>();
+    for expected_type in all_expected_types {
+        if expected_type.as_str() == type_text {
+            return Ok(expected_type);
+        }
     }
+
+    Err(ParseError::unexpected_field_type(line, type_text))
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]

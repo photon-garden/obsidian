@@ -3,6 +3,7 @@ use chrono::NaiveDate;
 use super::line::Line;
 use super::normalized_string::NormalizedString;
 use super::schema::{ExpectedType, FieldDefinition, Schema};
+use crate::obsidian::{Vault, VaultItemId, WikiLinkString};
 use std::collections::HashMap;
 
 #[derive(Debug, Clone)]
@@ -17,7 +18,7 @@ impl Metadata {
         }
     }
 
-    pub fn try_add_field(&mut self, schema: &Schema, line: &Line) -> LineWas {
+    pub fn try_add_field(&mut self, vault: &Vault, schema: &Schema, line: &Line) -> LineWas {
         let text_without_comments = line.text_without_comments.trim();
         if text_without_comments.is_empty() {
             return LineWas::Empty;
@@ -44,10 +45,11 @@ impl Metadata {
         };
 
         // And the value is what the schema expects for that field,
-        let field_value = match self.try_parse_field_value(&field_definition.expected_type, value) {
-            Some(field_value) => field_value,
-            None => return LineWas::OtherText,
-        };
+        let field_value =
+            match self.try_parse_field_value(vault, &field_definition.expected_type, value) {
+                Some(field_value) => field_value,
+                None => return LineWas::OtherText,
+            };
 
         self.fields.insert(NormalizedString::new(key), field_value);
         LineWas::ValidMetadataField
@@ -75,10 +77,25 @@ impl Metadata {
 
     fn try_parse_field_value(
         &self,
+        vault: &Vault,
         expected_type: &ExpectedType,
         value: &str,
     ) -> Option<FieldValue> {
         match expected_type {
+            ExpectedType::Link => {
+                let wiki_link = value.parse::<WikiLinkString>().ok()?;
+                let vault_item_id = vault.vault_item_id_by_wiki_link(value);
+                let field_value = FieldValue::Link {
+                    wiki_link_text: wiki_link,
+                    vault_item_id,
+                };
+                Some(field_value)
+            }
+            ExpectedType::String => {
+                let parsed = FieldValue::String(value.trim().to_string());
+                Some(parsed)
+            }
+            ExpectedType::U64 => value.trim().parse::<u64>().map(FieldValue::U64).ok(),
             ExpectedType::YyyyMmDd => {
                 let cleaned = {
                     let cleaned = value.trim();
@@ -101,11 +118,6 @@ impl Metadata {
                 let date = NaiveDate::from_ymd_opt(year, month, day)?;
                 Some(FieldValue::YyyyMmDd(date))
             }
-            ExpectedType::String => {
-                let parsed = FieldValue::String(value.trim().to_string());
-                Some(parsed)
-            }
-            ExpectedType::U64 => value.trim().parse::<u64>().map(FieldValue::U64).ok(),
         }
     }
 }
@@ -115,6 +127,11 @@ pub enum FieldValue {
     YyyyMmDd(NaiveDate),
     String(String),
     U64(u64),
+    Link {
+        wiki_link_text: WikiLinkString,
+        /// Will be `None` if the link is to a non-existent page.
+        vault_item_id: Option<VaultItemId>,
+    },
 }
 
 pub enum LineWas {

@@ -3,6 +3,7 @@ use super::parse_error::ParseError;
 use super::raw_section::RawSection;
 use super::schema::Schema;
 use super::section::Section;
+use crate::obsidian::Vault;
 
 #[derive(Debug)]
 pub struct Document {
@@ -11,7 +12,7 @@ pub struct Document {
 }
 
 impl Document {
-    pub fn from_str(document_text: String) -> Result<Self, ParseError> {
+    pub fn from_str(vault: &Vault, document_text: String) -> Result<Self, ParseError> {
         let mut raw_sections = get_raw_sections(document_text)
             .into_iter()
             .filter(|raw_section| raw_section.is_a_leaflet_section());
@@ -22,7 +23,7 @@ impl Document {
 
         type Sections = Vec<Section>;
         let sections = raw_sections
-            .map(|raw_section| Section::from_raw_section(&schema, raw_section))
+            .map(|raw_section| Section::from_raw_section(vault, &schema, raw_section))
             .collect::<Result<Sections, ParseError>>()?;
 
         Ok(Document { schema, sections })

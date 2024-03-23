@@ -1,7 +1,7 @@
 use crate::extensions::VecExtension;
 use crate::obsidian::Vault;
 use crate::File;
-use crate::Reference;
+use crate::Link;
 
 pub fn convert_2023_haiku_to_csv() {
     println!("Converting 2023 haiku to CSV...");
@@ -58,7 +58,7 @@ fn parse_lines(lines_in_section: Vec<&str>, vault_files: &[&File]) -> Vec<Parsed
         .next()
         .expect("Expected each section to have at least one line with letters.");
     let references_on_first_line =
-        Reference::parse_references(first_line_with_letters_or_numbers, vault_files);
+        Link::parse_references(first_line_with_letters_or_numbers, vault_files);
     if references_on_first_line.len() != 1 {
         panic!("Expected only a single reference on the first line.");
     }
@@ -71,7 +71,7 @@ fn parse_lines(lines_in_section: Vec<&str>, vault_files: &[&File]) -> Vec<Parsed
 
     lines_with_letters_or_numbers
         .map(|line| {
-            let references = Reference::parse_references(line, vault_files);
+            let references = Link::parse_references(line, vault_files);
             let (text, kind) = if references.len() == 1 && references.first().unwrap().is_embed {
                 let reference = references.into_iter().next().unwrap();
                 let vault_item_id = reference.vault_item_id.unwrap();

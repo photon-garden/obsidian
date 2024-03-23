@@ -14,3 +14,5 @@ mod vault;
 pub use vault::Vault;
 mod vault_item;
 pub use vault_item::*;
+mod wiki_link_string;
+pub use wiki_link_string::*;

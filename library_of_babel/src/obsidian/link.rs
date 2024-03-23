@@ -11,7 +11,7 @@ pub struct Link {
     pub vault_item_id: Option<VaultItemId>,
 }
 
-/// Link text is the text between double brackets in a wikilink.
+/// Link text is the text between double brackets in a wiki_link.
 /// In this example, the link text is "Richard Feynman":
 ///
 /// ```
@@ -19,7 +19,7 @@ pub struct Link {
 /// ```
 pub type LinkText = String;
 
-/// Link text is the text between double brackets in a wikilink.
+/// Link text is the text between double brackets in a wiki_link.
 /// In this example, the link text is "Richard Feynman":
 ///
 /// ```
@@ -27,8 +27,8 @@ pub type LinkText = String;
 /// ```
 pub type LinkTextStr = str;
 
-/// A wikilink is a string formatted like this: `[[Richard Feynman]]`.
-pub type WikilinkStr = str;
+/// A wiki_link is a string formatted like this: `[[Richard Feynman]]`.
+pub type WikiLinkStr = str;
 
 impl Link {
     /// `string` is often the contents of a page.
@@ -65,8 +65,8 @@ impl Link {
         }
     }
 
-    pub fn extract_link_text_from_wikilink(wikilink: &str) -> LinkText {
-        wikilink.replace(['!', '[', ']'], "")
+    pub fn extract_link_text(wiki_link: &WikiLinkStr) -> LinkText {
+        wiki_link.replace(['!', '[', ']'], "")
     }
 
     /// This function expects that files has been sorted so that
@@ -74,11 +74,8 @@ impl Link {
     ///
     /// We need a list of files because we need to resolve the reference
     /// to a specific file.
-    pub fn find_vault_item_id<'f>(
-        link_text: &LinkTextStr,
-        files: &'f [&File],
-    ) -> Option<VaultItemId> {
-        Link::find_closest_matching_file(&link_text, files).map(VaultItemId::from_file)
+    pub fn find_vault_item_id(link_text: &LinkTextStr, files: &[&File]) -> Option<VaultItemId> {
+        Link::find_closest_matching_file(link_text, files).map(VaultItemId::from_file)
     }
 
     /// This function expects that files has been sorted so that

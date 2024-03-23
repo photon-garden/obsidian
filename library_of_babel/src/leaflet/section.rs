@@ -4,6 +4,7 @@ use super::paragraph::Paragraph;
 use super::parse_error::ParseError;
 use super::raw_section::RawSection;
 use super::schema::Schema;
+use crate::obsidian::Vault;
 
 #[derive(Debug)]
 pub struct Section {
@@ -11,7 +12,11 @@ pub struct Section {
 }
 
 impl Section {
-    pub fn from_raw_section(schema: &Schema, raw_section: RawSection) -> Result<Self, ParseError> {
+    pub fn from_raw_section(
+        vault: &Vault,
+        schema: &Schema,
+        raw_section: RawSection,
+    ) -> Result<Self, ParseError> {
         let mut metadata = Metadata::new();
         let mut paragraph_lines = vec![];
         let mut paragraphs = vec![];
@@ -26,7 +31,7 @@ impl Section {
         };
 
         for line in raw_section.lines {
-            match metadata.try_add_field(schema, &line) {
+            match metadata.try_add_field(vault, schema, &line) {
                 LineWas::ValidMetadataField => continue,
                 LineWas::Empty => {
                     save_paragraph(&metadata, paragraph_lines);

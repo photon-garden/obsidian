@@ -14,6 +14,6 @@ pub fn test_leaflet() {
 
     let note_contents = haiku_2024_note.contents.clone();
     dbg!(&note_contents);
-    let leaflet_document = leaflet::Document::from_str(note_contents).unwrap();
+    let leaflet_document = leaflet::Document::from_str(&vault, note_contents).unwrap();
     dbg!(&leaflet_document);
 }

@@ -36,8 +36,8 @@ impl LinkSpan {
         self.span.update_text(new_text, page_contents)
     }
 
-    pub fn range(&self) -> Range<usize> {
-        self.span.range
+    pub fn range(&self) -> &Range<usize> {
+        &self.span.range
     }
 
     pub fn link_text(&self) -> &LinkTextStr {
