@@ -71,7 +71,7 @@ impl VaultItem {
         &mut self,
         get_new_reference_text: GetNewReferenceText,
     ) where
-        GetNewReferenceText: Fn(&Reference) -> String,
+        GetNewReferenceText: Fn(&ReferenceSpan) -> String,
     {
         if let VaultItem::Page(page) = self {
             page.find_and_replace_text_for_references(get_new_reference_text);
@@ -80,6 +80,7 @@ impl VaultItem {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+/// The path from the vault root.
 pub struct VaultItemId(String);
 
 impl VaultItemId {

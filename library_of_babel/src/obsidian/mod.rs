@@ -1,17 +1,16 @@
 mod file;
 pub use file::*;
-
 mod page;
 pub use page::*;
-
 mod reference;
 pub use reference::*;
-
+mod reference_span;
+pub use reference_span::*;
+mod span;
+pub use span::*;
 mod tag;
 pub use tag::*;
-
 mod vault;
 pub use vault::Vault;
-
 mod vault_item;
 pub use vault_item::*;

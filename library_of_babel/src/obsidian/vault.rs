@@ -1,7 +1,6 @@
+use super::{vault_items, File, LinkTextStr, Page, Reference, VaultItem, VaultItemId};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
-
-use super::{vault_items, File, Page, Reference, VaultItem, VaultItemId};
 
 #[derive(Debug)]
 pub struct Vault {
@@ -112,12 +111,13 @@ impl Vault {
         VaultItem::from_file(&file, &self.file_vec())
     }
 
+    pub fn vault_item_by_link_text(&self, link_text: &LinkTextStr) -> Option<&VaultItem> {
+        let files = self.file_vec();
+        let vault_item_id = Reference::find_vault_item_id(link_text, &files)?;
+        self.item(&vault_item_id)
+    }
+
     fn file_vec(&self) -> Vec<&File> {
         self.items_by_id.values().map(|item| item.file()).collect()
     }
-
-    // fn create_page(&mut self, id: VaultItemId) -> Page {
-    // let page =
-    //     self.items_by_id.insert(id, v)
-    // }
 }

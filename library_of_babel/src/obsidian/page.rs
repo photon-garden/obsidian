@@ -5,7 +5,7 @@ pub struct Page {
     pub id: VaultItemId,
     pub file: File,
     pub contents: String,
-    pub references: Vec<Reference>,
+    pub reference_spans: Vec<ReferenceSpan>,
     pub tags: Vec<String>,
 }
 
@@ -16,7 +16,7 @@ impl Page {
             id: VaultItemId::from_file(&file),
             file,
             contents,
-            references: parsed_page_contents.references,
+            reference_spans: parsed_page_contents.reference_spans,
             tags: parsed_page_contents.tags,
         }
     }
@@ -25,47 +25,45 @@ impl Page {
         &mut self,
         get_new_reference_text: GetNewReferenceText,
     ) where
-        GetNewReferenceText: Fn(&Reference) -> String,
+        GetNewReferenceText: Fn(&ReferenceSpan) -> String,
     {
         let mut cumulative_range_shift: i64 = 0;
-        for reference in &mut self.references {
-            let new_text = get_new_reference_text(reference);
-            reference.shift_range(cumulative_range_shift);
+        for reference_span in &mut self.reference_spans {
+            let new_text = get_new_reference_text(reference_span);
+            reference_span.shift_range(cumulative_range_shift);
             let range_shift_for_this_reference =
-                reference.update_text(&new_text, &mut self.contents);
+                reference_span.update_text(&new_text, &mut self.contents);
             cumulative_range_shift += range_shift_for_this_reference;
         }
     }
 
     pub fn replace_reference_text(
-        reference_to_update: &mut Reference,
+        reference_span_to_update: &mut ReferenceSpan,
         new_text: String,
-        references: &mut Vec<Reference>,
+        reference_spans: &mut Vec<ReferenceSpan>,
         contents: &mut String,
     ) {
         let mut cumulative_range_shift: i64 = 0;
-        for reference in references {
-            reference.shift_range(cumulative_range_shift);
-            if reference.range == reference_to_update.range {
-                let range_shift_for_this_reference = reference.update_text(&new_text, contents);
+        for reference_span in reference_spans {
+            reference_span.shift_range(cumulative_range_shift);
+            if reference_span.range() == reference_span_to_update.range() {
+                let range_shift_for_this_reference =
+                    reference_span.update_text(&new_text, contents);
                 cumulative_range_shift += range_shift_for_this_reference;
             }
         }
     }
 
-    pub fn find_reference_by_text_between_double_brackets(
-        &self,
-        text_between_double_brackets: &str,
-    ) -> Option<&Reference> {
-        self.references.iter().find(|reference| {
-            reference.text_between_double_brackets == text_between_double_brackets
-        })
+    pub fn find_reference_by_link_text(&self, link_text: &LinkTextStr) -> Option<&ReferenceSpan> {
+        self.reference_spans
+            .iter()
+            .find(|reference_span| reference_span.link_text() == link_text)
     }
 
     pub fn has_a_reference_to(&self, target_id: &VaultItemId) -> bool {
-        self.references
+        self.reference_spans
             .iter()
-            .any(|reference| reference.refers_to(target_id))
+            .any(|reference_span| reference_span.refers_to(target_id))
     }
 }
 
@@ -92,12 +90,15 @@ impl<'a> TryFrom<&'a mut VaultItem> for &'a mut Page {
 }
 
 fn parse_page_contents(page_contents: &str, files: &[&File]) -> ParsedPageContents {
-    let references = Reference::parse_references(page_contents, files);
+    let reference_spans = ReferenceSpan::parse_reference_spans(page_contents, files);
     let tags = Tag::parse_tags(page_contents);
-    ParsedPageContents { references, tags }
+    ParsedPageContents {
+        reference_spans,
+        tags,
+    }
 }
 
 struct ParsedPageContents {
-    references: Vec<Reference>,
+    reference_spans: Vec<ReferenceSpan>,
     tags: Vec<String>,
 }
