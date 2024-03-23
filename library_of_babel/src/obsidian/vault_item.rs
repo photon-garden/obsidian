@@ -71,7 +71,7 @@ impl VaultItem {
         &mut self,
         get_new_reference_text: GetNewReferenceText,
     ) where
-        GetNewReferenceText: Fn(&ReferenceSpan) -> String,
+        GetNewReferenceText: Fn(&LinkSpan) -> String,
     {
         if let VaultItem::Page(page) = self {
             page.find_and_replace_text_for_references(get_new_reference_text);

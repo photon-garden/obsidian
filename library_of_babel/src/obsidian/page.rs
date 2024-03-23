@@ -5,7 +5,7 @@ pub struct Page {
     pub id: VaultItemId,
     pub file: File,
     pub contents: String,
-    pub reference_spans: Vec<ReferenceSpan>,
+    pub reference_spans: Vec<LinkSpan>,
     pub tags: Vec<String>,
 }
 
@@ -25,7 +25,7 @@ impl Page {
         &mut self,
         get_new_reference_text: GetNewReferenceText,
     ) where
-        GetNewReferenceText: Fn(&ReferenceSpan) -> String,
+        GetNewReferenceText: Fn(&LinkSpan) -> String,
     {
         let mut cumulative_range_shift: i64 = 0;
         for reference_span in &mut self.reference_spans {
@@ -38,9 +38,9 @@ impl Page {
     }
 
     pub fn replace_reference_text(
-        reference_span_to_update: &mut ReferenceSpan,
+        reference_span_to_update: &mut LinkSpan,
         new_text: String,
-        reference_spans: &mut Vec<ReferenceSpan>,
+        reference_spans: &mut Vec<LinkSpan>,
         contents: &mut String,
     ) {
         let mut cumulative_range_shift: i64 = 0;
@@ -54,7 +54,7 @@ impl Page {
         }
     }
 
-    pub fn find_reference_by_link_text(&self, link_text: &LinkTextStr) -> Option<&ReferenceSpan> {
+    pub fn find_reference_by_link_text(&self, link_text: &LinkTextStr) -> Option<&LinkSpan> {
         self.reference_spans
             .iter()
             .find(|reference_span| reference_span.link_text() == link_text)
@@ -90,7 +90,7 @@ impl<'a> TryFrom<&'a mut VaultItem> for &'a mut Page {
 }
 
 fn parse_page_contents(page_contents: &str, files: &[&File]) -> ParsedPageContents {
-    let reference_spans = ReferenceSpan::parse_reference_spans(page_contents, files);
+    let reference_spans = LinkSpan::parse_reference_spans(page_contents, files);
     let tags = Tag::parse_tags(page_contents);
     ParsedPageContents {
         reference_spans,
@@ -99,6 +99,6 @@ fn parse_page_contents(page_contents: &str, files: &[&File]) -> ParsedPageConten
 }
 
 struct ParsedPageContents {
-    reference_spans: Vec<ReferenceSpan>,
+    reference_spans: Vec<LinkSpan>,
     tags: Vec<String>,
 }

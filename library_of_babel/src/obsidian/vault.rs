@@ -1,4 +1,4 @@
-use super::{vault_items, File, LinkTextStr, Page, Reference, VaultItem, VaultItemId};
+use super::{vault_items, File, Link, LinkTextStr, Page, VaultItem, VaultItemId};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
@@ -65,7 +65,7 @@ impl Vault {
         self.items_mut().filter_map(|item| item.try_into_page_mut())
     }
 
-    pub fn referenced_item(&self, reference: &Reference) -> Option<&VaultItem> {
+    pub fn referenced_item(&self, reference: &Link) -> Option<&VaultItem> {
         reference
             .vault_item_id
             .as_ref()
@@ -113,7 +113,7 @@ impl Vault {
 
     pub fn vault_item_by_link_text(&self, link_text: &LinkTextStr) -> Option<&VaultItem> {
         let files = self.file_vec();
-        let vault_item_id = Reference::find_vault_item_id(link_text, &files)?;
+        let vault_item_id = Link::find_vault_item_id(link_text, &files)?;
         self.item(&vault_item_id)
     }
 

@@ -4,7 +4,7 @@ use lazy_static::lazy_static;
 use regex::Regex;
 
 #[derive(Debug, Clone)]
-pub struct Reference {
+pub struct Link {
     pub is_embed: bool,
     pub link_text: LinkText,
     pub text: String,
@@ -30,11 +30,11 @@ pub type LinkTextStr = str;
 /// A wikilink is a string formatted like this: `[[Richard Feynman]]`.
 pub type WikilinkStr = str;
 
-impl Reference {
+impl Link {
     /// `string` is often the contents of a page.
     /// `files` is necessary because we try and resolve which file the
     /// reference is pointing to.
-    pub fn parse_references(string: &str, files: &[&File]) -> Vec<Reference> {
+    pub fn parse_references(string: &str, files: &[&File]) -> Vec<Link> {
         lazy_static! {
             static ref match_references: Regex =
                 Regex::new(r"!?\[\[.+?\]\]").expect("Error compiling regex.");
@@ -44,20 +44,20 @@ impl Reference {
             .find_iter(string)
             .map(|current_match| {
                 let matched_text = current_match.as_str();
-                Reference::new(matched_text, files)
+                Link::new(matched_text, files)
             })
             .collect()
     }
 
-    pub fn new(matched_text: &str, files: &[&File]) -> Reference {
+    pub fn new(matched_text: &str, files: &[&File]) -> Link {
         let is_embed = matched_text.starts_with("![[");
 
         // This is the text between [[ and ]].
         let link_text: LinkText = matched_text.replace(['!', '[', ']'], "");
 
-        let vault_item_id = Reference::find_vault_item_id(&link_text, files);
+        let vault_item_id = Link::find_vault_item_id(&link_text, files);
 
-        Reference {
+        Link {
             is_embed,
             text: matched_text.to_string(),
             link_text,
@@ -78,7 +78,7 @@ impl Reference {
         link_text: &LinkTextStr,
         files: &'f [&File],
     ) -> Option<VaultItemId> {
-        Reference::find_closest_matching_file(&link_text, files).map(VaultItemId::from_file)
+        Link::find_closest_matching_file(&link_text, files).map(VaultItemId::from_file)
     }
 
     /// This function expects that files has been sorted so that
